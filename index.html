@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Host with Nimah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['"Playfair Display"', 'serif'],
+              sans: ['"Lato"', 'sans-serif'],
+            },
+            colors: {
+              'nimah-cream': '#F4E3B2',
+              'nimah-black': '#310E10',
+              'nimah-red': '#74070E',
+              'nimah-olive': '#45462A',
+              'nimah-rose': '#947268',
+              'nimah-paper': '#FDFBF7'
+            },
+            animation: {
+              'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #310E10; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #74070E; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #947268; 
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(116, 7, 14, 0.1);
+      }
+      .dark .glass-panel {
+        background: rgba(49, 14, 16, 0.7);
+        border: 1px solid rgba(244, 227, 178, 0.1);
+      }
+      .loader-bg {
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: .5; }
+      }
+    </style>
+
+  <link rel="stylesheet" href="/index.css">
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/host-with-nimah/assets/index-B2HseYtY.js"></script>
+</head>
+  <body class="bg-nimah-paper dark:bg-nimah-black transition-colors duration-500 overflow-x-hidden selection:bg-nimah-red selection:text-white">
+
+    <!-- NavBar -->
+    <nav class="fixed top-0 w-full z-50 transition-colors duration-300 bg-nimah-paper/90 dark:bg-nimah-black/90 backdrop-blur-md border-b border-nimah-rose/20 dark:border-nimah-cream/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20 md:h-24">
+          <!-- Logo -->
+          <div class="flex-shrink-0 cursor-pointer group" onclick="scrollToSection('home')">
+            <h1 class="font-serif text-xl md:text-2xl tracking-widest text-nimah-black dark:text-nimah-cream group-hover:text-nimah-red transition-colors duration-300">
+              HOST <span class="text-nimah-red dark:text-nimah-rose text-lg italic">with</span> NIMAH
+            </h1>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:flex items-center space-x-8">
+            <button onclick="scrollToSection('home')" class="font-sans text-xs font-bold uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-cream/80 hover:text-nimah-red dark:hover:text-nimah-rose transition-colors">Home</button>
+            <button onclick="scrollToSection('ai-chef')" class="font-sans text-xs font-bold uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-cream/80 hover:text-nimah-red dark:hover:text-nimah-rose transition-colors">Inspiration</button>
+            <button onclick="scrollToSection('signature')" class="font-sans text-xs font-bold uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-cream/80 hover:text-nimah-red dark:hover:text-nimah-rose transition-colors">Recipes</button>
+            <button onclick="scrollToSection('services')" class="font-sans text-xs font-bold uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-cream/80 hover:text-nimah-red dark:hover:text-nimah-rose transition-colors">Services</button>
+            <button onclick="scrollToSection('contact')" class="font-sans text-xs font-bold uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-cream/80 hover:text-nimah-red dark:hover:text-nimah-rose transition-colors">Request Hosting</button>
+            
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-nimah-cream/20 dark:hover:bg-nimah-rose/20 transition-colors">
+              <i data-lucide="moon" class="block dark:hidden text-nimah-olive w-5 h-5"></i>
+              <i data-lucide="sun" class="hidden dark:block text-nimah-cream w-5 h-5"></i>
+            </button>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden flex items-center">
+            <button id="mobile-menu-btn" class="p-2 text-nimah-black dark:text-nimah-cream">
+              <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Dropdown -->
+      <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-nimah-paper dark:bg-nimah-black border-b border-nimah-rose/20 shadow-lg">
+        <div class="px-4 pt-2 pb-6 space-y-2">
+          <button onclick="scrollToSection('home')" class="block w-full text-left px-3 py-4 font-serif text-xl text-nimah-black dark:text-nimah-cream hover:bg-nimah-cream/20 dark:hover:bg-nimah-red/10">Home</button>
+          <button onclick="scrollToSection('ai-chef')" class="block w-full text-left px-3 py-4 font-serif text-xl text-nimah-black dark:text-nimah-cream hover:bg-nimah-cream/20 dark:hover:bg-nimah-red/10">Inspiration</button>
+          <button onclick="scrollToSection('signature')" class="block w-full text-left px-3 py-4 font-serif text-xl text-nimah-black dark:text-nimah-cream hover:bg-nimah-cream/20 dark:hover:bg-nimah-red/10">Recipes</button>
+          <button onclick="scrollToSection('services')" class="block w-full text-left px-3 py-4 font-serif text-xl text-nimah-black dark:text-nimah-cream hover:bg-nimah-cream/20 dark:hover:bg-nimah-red/10">Services</button>
+          <button onclick="scrollToSection('contact')" class="block w-full text-left px-3 py-4 font-serif text-xl text-nimah-black dark:text-nimah-cream hover:bg-nimah-cream/20 dark:hover:bg-nimah-red/10">Request Hosting</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-nimah-black">
+      <!-- Parallax Bg -->
+      <div id="hero-bg-container" class="absolute left-0 w-full h-[140%] -top-[20%] z-0 will-change-transform">
+         <!-- Loading Placeholder -->
+         <div id="hero-loader" class="absolute inset-0 bg-nimah-rose/20 dark:bg-nimah-black animate-pulse z-0 transition-opacity duration-1000"></div>
+         <img 
+            src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1974&auto=format&fit=crop" 
+            alt="Vibrant aesthetic dinner"
+            class="w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0"
+            onload="this.classList.remove('opacity-0'); this.classList.add('opacity-100', 'dark:opacity-80'); document.getElementById('hero-loader').classList.add('opacity-0');"
+         />
+      </div>
+
+      <!-- Gradient -->
+      <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-nimah-cream/30 via-transparent to-nimah-paper dark:from-nimah-black/60 dark:via-nimah-black/20 dark:to-nimah-black"></div>
+
+      <div class="relative z-10 text-center px-4 max-w-5xl mx-auto mt-20">
+        <p class="font-sans uppercase tracking-[0.4em] text-xs md:text-sm text-nimah-red dark:text-nimah-cream mb-6 animate-fade-in-up font-bold drop-shadow-md bg-white/20 dark:bg-black/20 backdrop-blur-sm py-2 px-4 inline-block rounded-full">
+          The Art of Hosting
+        </p>
+        <h1 class="font-serif text-6xl md:text-8xl lg:text-9xl text-nimah-black dark:text-nimah-cream mb-6 leading-[0.9] animate-fade-in-up delay-100 drop-shadow-lg">
+          Life <span class="italic text-nimah-red dark:text-nimah-rose font-light">of</span> Nimah
+        </h1>
+        <p class="font-sans text-lg md:text-xl text-nimah-black dark:text-nimah-cream/90 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up delay-200 font-medium drop-shadow-md bg-white/10 dark:bg-black/10 backdrop-blur-[1px] rounded-lg p-2">
+          Curating unforgettable moments through taste, texture, and time.
+        </p>
+        
+        <div class="flex flex-col md:flex-row gap-6 justify-center items-center animate-fade-in-up delay-300">
+            <button onclick="scrollToSection('ai-chef')" class="px-10 py-4 bg-nimah-red text-nimah-cream font-sans uppercase tracking-[0.2em] text-xs hover:bg-nimah-black hover:text-white transition-all duration-500 min-w-[220px] shadow-xl border border-transparent hover:border-white/20">
+                Consult the Agent
+            </button>
+            <button onclick="scrollToSection('contact')" class="px-10 py-4 border border-nimah-black dark:border-nimah-cream text-nimah-black dark:text-nimah-cream font-sans uppercase tracking-[0.2em] text-xs hover:bg-nimah-black hover:text-white dark:hover:bg-nimah-cream dark:hover:text-nimah-black transition-all duration-500 min-w-[220px] bg-white/40 dark:bg-black/40 backdrop-blur-md shadow-lg">
+                Request Hosting
+            </button>
+        </div>
+      </div>
+
+      <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer z-10" onclick="scrollToSection('ai-chef')">
+        <i data-lucide="arrow-down" class="text-nimah-black dark:text-nimah-cream opacity-80 hover:opacity-100 transition-opacity drop-shadow-lg w-6 h-6"></i>
+      </div>
+    </section>
+
+    <!-- AI Chef Section -->
+    <section id="ai-chef" class="py-20 md:py-24 bg-nimah-paper dark:bg-nimah-black transition-colors duration-500">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          <!-- Text Side -->
+          <div class="order-2 lg:order-1">
+            <h2 class="font-serif text-5xl md:text-6xl text-nimah-black dark:text-nimah-cream mb-6 leading-tight">
+              Your Personal <br />
+              <span class="italic text-nimah-rose">Culinary Muse</span>
+            </h2>
+            <p class="font-sans text-lg text-nimah-olive dark:text-nimah-cream/80 mb-6 leading-relaxed font-light">
+              Not sure what to serve for your next soirée? Wondering which wine pairs with sea bass? 
+              Or perhaps you need a quick, aesthetic brunch idea. My AI assistant is trained on 
+              my personal style and Tanzanian heritage to guide you.
+            </p>
+            
+            <!-- Quick Prompts (Fills Empty Space) -->
+            <div class="flex flex-wrap gap-3 mb-8">
+                <button onclick="fillChat('Plan a menu for a summer garden party')" class="px-4 py-2 bg-nimah-olive/10 dark:bg-nimah-cream/10 text-nimah-olive dark:text-nimah-cream text-xs uppercase tracking-widest rounded-full hover:bg-nimah-red hover:text-white transition-colors">
+                   Summer Soirée
+                </button>
+                <button onclick="fillChat('How do I make authentic Zanzibar Pilau?')" class="px-4 py-2 bg-nimah-olive/10 dark:bg-nimah-cream/10 text-nimah-olive dark:text-nimah-cream text-xs uppercase tracking-widest rounded-full hover:bg-nimah-red hover:text-white transition-colors">
+                   Zanzibar Pilau
+                </button>
+                <button onclick="fillChat('Suggest a red wine pairing for grilled lamb')" class="px-4 py-2 bg-nimah-olive/10 dark:bg-nimah-cream/10 text-nimah-olive dark:text-nimah-cream text-xs uppercase tracking-widest rounded-full hover:bg-nimah-red hover:text-white transition-colors">
+                   Wine Pairing
+                </button>
+            </div>
+
+            <!-- Aesthetic Image (Visual Anchor) -->
+            <div class="relative group bg-nimah-rose/10 rounded-sm overflow-hidden h-[300px] lg:h-[500px] w-full">
+                <div class="absolute inset-0 bg-nimah-rose/20 dark:bg-white/5 animate-pulse rounded-sm z-10 loader-bg"></div>
+                <div class="absolute inset-0 bg-nimah-red opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-sm z-20"></div>
+                <img 
+                    src="https://images.unsplash.com/photo-1547496502-ffa222d79634?q=80&w=1000&auto=format&fit=crop" 
+                    alt="Aesthetics of cooking" 
+                    class="w-full h-full object-cover transition-all duration-1000 opacity-0 grayscale hover:grayscale-0"
+                    onload="this.classList.remove('opacity-0'); this.previousElementSibling.previousElementSibling.remove()"
+                />
+            </div>
+          </div>
+
+          <!-- Chat Interface -->
+          <div class="order-1 lg:order-2 h-[600px] lg:h-[700px] flex flex-col glass-panel rounded-t-[40px] rounded-b-[40px] shadow-2xl overflow-hidden relative border-nimah-rose/30">
+             <div class="bg-nimah-cream/50 dark:bg-nimah-black/50 p-6 border-b border-nimah-rose/10 flex items-center justify-between backdrop-blur-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-nimah-red flex items-center justify-center text-nimah-cream shadow-md">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="font-serif text-nimah-black dark:text-nimah-cream font-semibold block text-lg">
+                            Ask Nimah
+                        </span>
+                        <span class="text-xs font-sans uppercase tracking-wider text-nimah-olive dark:text-nimah-rose flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            Online
+                        </span>
+                    </div>
+                </div>
+             </div>
+
+             <!-- Messages Area -->
+             <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-8 bg-white/40 dark:bg-black/20 scroll-smooth">
+                <!-- Welcome Message -->
+                <div class="flex justify-start">
+                  <div class="flex flex-row gap-3 max-w-[90%] md:max-w-[85%]">
+                    <div class="p-5 rounded-2xl text-sm md:text-base leading-relaxed whitespace-pre-wrap shadow-sm bg-white dark:bg-nimah-black border border-nimah-rose/20 text-nimah-black dark:text-nimah-cream rounded-tl-none w-full">
+                      Jambo, darling! I am Nimah's virtual culinary muse. Whether you crave the spices of Zanzibar or modern hosting tips, I'm here. Ask me for a recipe (like a classic Pilau) or advice for your next soirée.
+                    </div>
+                  </div>
+                </div>
+             </div>
+
+             <!-- Input Area -->
+             <div class="p-6 bg-white dark:bg-nimah-black border-t border-nimah-rose/10">
+                <div class="flex items-center gap-2 relative">
+                    <input
+                        type="text"
+                        id="chat-input"
+                        placeholder="Ask about Tanzanian spices or hosting tips..."
+                        class="w-full bg-nimah-paper dark:bg-white/5 text-nimah-black dark:text-nimah-cream rounded-full py-4 px-6 pr-14 focus:outline-none focus:ring-1 focus:ring-nimah-rose transition-all font-sans placeholder:text-nimah-olive/50 dark:placeholder:text-nimah-cream/30 border border-transparent focus:border-nimah-rose/30"
+                    />
+                    <button 
+                        id="send-btn"
+                        class="absolute right-2 p-3 bg-nimah-red text-nimah-cream rounded-full hover:bg-nimah-rose transition-colors shadow-lg"
+                    >
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Signature Recipes Section -->
+    <section id="signature" class="py-20 md:py-24 bg-nimah-olive dark:bg-nimah-black/95 transition-colors duration-500">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <span class="font-sans uppercase text-nimah-cream/80 dark:text-nimah-rose tracking-[0.3em] text-xs font-bold">Culinary Heritage</span>
+          <h2 class="font-serif text-5xl text-nimah-cream dark:text-nimah-cream mt-6 mb-8">Taste of Tanzania</h2>
+          <div class="w-24 h-1 bg-nimah-red mx-auto rounded-full mb-8"></div>
+          <p class="font-sans text-nimah-cream/80 dark:text-nimah-cream/70 max-w-2xl mx-auto leading-relaxed">
+            Authentic recipes passed down through generations. From the streets of Stone Town to the shores of Dar es Salaam, experience the flavors that define my home.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="signature-grid">
+           <!-- Card 1 -->
+           <div class="h-full bg-nimah-paper dark:bg-white/5 border border-nimah-cream/10 rounded-xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-transform duration-500 flex flex-col">
+              <div class="h-48 w-full relative overflow-hidden group">
+                  <div class="absolute inset-0 bg-nimah-black/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Zanzibar Pilau">
+              </div>
+              <div class="bg-nimah-rose/10 p-5 border-b border-nimah-rose/10">
+                  <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="chef-hat" class="text-nimah-red dark:text-nimah-rose w-4 h-4"></i>
+                    <span class="text-xs font-sans uppercase tracking-widest text-nimah-olive dark:text-nimah-cream/70">Signature</span>
+                  </div>
+                  <h3 class="font-serif text-2xl text-nimah-black dark:text-nimah-cream">Zanzibar Pilau</h3>
+              </div>
+              <div class="p-6 space-y-4 flex-grow">
+                  <p class="text-sm italic text-nimah-black/70 dark:text-nimah-cream/70 font-serif">"A fragrant celebration of the Spice Island, infused with cardamom, cinnamon, cloves, and cumin."</p>
+                  <div class="flex flex-wrap gap-2 text-xs font-bold uppercase text-nimah-olive dark:text-nimah-rose">
+                      <span class="bg-nimah-black/5 dark:bg-white/10 px-2 py-1 rounded">Prep: 30m</span>
+                      <span class="bg-nimah-black/5 dark:bg-white/10 px-2 py-1 rounded">Cook: 45m</span>
+                  </div>
+              </div>
+           </div>
+           
+           <!-- Card 2 -->
+           <div class="h-full bg-nimah-paper dark:bg-white/5 border border-nimah-cream/10 rounded-xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-transform duration-500 flex flex-col">
+              <div class="h-48 w-full relative overflow-hidden group">
+                  <div class="absolute inset-0 bg-nimah-black/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Kuku Paka">
+              </div>
+              <div class="bg-nimah-rose/10 p-5 border-b border-nimah-rose/10">
+                  <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="chef-hat" class="text-nimah-red dark:text-nimah-rose w-4 h-4"></i>
+                    <span class="text-xs font-sans uppercase tracking-widest text-nimah-olive dark:text-nimah-cream/70">Signature</span>
+                  </div>
+                  <h3 class="font-serif text-2xl text-nimah-black dark:text-nimah-cream">Kuku Paka</h3>
+              </div>
+              <div class="p-6 space-y-4 flex-grow">
+                  <p class="text-sm italic text-nimah-black/70 dark:text-nimah-cream/70 font-serif">"A coastal favorite, grilled chicken smothered in a rich, smoky coconut curry sauce."</p>
+                  <div class="flex flex-wrap gap-2 text-xs font-bold uppercase text-nimah-olive dark:text-nimah-rose">
+                      <span class="bg-nimah-black/5 dark:bg-white/10 px-2 py-1 rounded">Prep: 20m</span>
+                      <span class="bg-nimah-black/5 dark:bg-white/10 px-2 py-1 rounded">Cook: 40m</span>
+                  </div>
+              </div>
+           </div>
+
+           <!-- Card 3 -->
+           <div class="h-full bg-nimah-paper dark:bg-white/5 border border-nimah-cream/10 rounded-xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-transform duration-500 flex flex-col">
+              <div class="h-48 w-full relative overflow-hidden group">
+                  <div class="absolute inset-0 bg-nimah-black/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Maharage ya Nazi">
+              </div>
+              <div class="bg-nimah-rose/10 p-5 border-b border-nimah-rose/10">
+                  <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="chef-hat" class="text-nimah-red dark:text-nimah-rose w-4 h-4"></i>
+                    <span class="text-xs font-sans uppercase tracking-widest text-nimah-olive dark:text-nimah-cream/70">Signature</span>
+                  </div>
+                  <h3 class="font-serif text-2xl text-nimah-black dark:text-nimah-cream">Maharage ya Nazi</h3>
+              </div>
+              <div class="p-6 space-y-4 flex-grow">
+                  <p class="text-sm italic text-nimah-black/70 dark:text-nimah-cream/70 font-serif">"Kidney beans simmered in creamy coconut milk—a comforting, vegetarian staple."</p>
+                  <div class="flex flex-wrap gap-2 text-xs font-bold uppercase text-nimah-olive dark:text-nimah-rose">
+                      <span class="bg-nimah-black/5 dark:bg-white/10 px-2 py-1 rounded">Prep: 10m</span>
+                      <span class="bg-nimah-black/5 dark:bg-white/10 px-2 py-1 rounded">Cook: 30m</span>
+                  </div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 md:py-24 bg-nimah-cream dark:bg-nimah-olive transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-5xl text-nimah-black dark:text-nimah-cream mb-6">Life of Nimah</h2>
+                <div class="w-px h-16 bg-nimah-red dark:bg-nimah-cream mx-auto mb-6"></div>
+                <p class="text-nimah-olive dark:text-nimah-cream/90 font-sans tracking-wide">MORE THAN FOOD. IT'S AN EXPERIENCE.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Service 1 -->
+                <div class="group cursor-pointer">
+                    <div class="overflow-hidden mb-8 relative aspect-[3/4] border border-nimah-black/10 dark:border-nimah-cream/10 bg-nimah-rose/10">
+                        <div class="absolute inset-0 bg-nimah-rose/20 dark:bg-nimah-cream/10 animate-pulse z-10 loader-bg"></div>
+                        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Intimate Dinners" class="w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-0" onload="this.classList.remove('opacity-0'); this.previousElementSibling.remove()">
+                        <div class="absolute inset-0 bg-nimah-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                    </div>
+                    <h3 class="font-serif text-3xl text-nimah-black dark:text-nimah-cream mb-3 group-hover:text-nimah-red dark:group-hover:text-nimah-cream transition-colors">Intimate Dinners</h3>
+                    <p class="font-sans text-nimah-black/70 dark:text-nimah-cream/80 text-base leading-relaxed border-t border-nimah-black/10 dark:border-nimah-cream/20 pt-4 mt-4">Curated menus for small gatherings where conversation flows as freely as the wine.</p>
+                </div>
+                <!-- Service 2 -->
+                <div class="group cursor-pointer">
+                    <div class="overflow-hidden mb-8 relative aspect-[3/4] border border-nimah-black/10 dark:border-nimah-cream/10 bg-nimah-rose/10">
+                         <div class="absolute inset-0 bg-nimah-rose/20 dark:bg-nimah-cream/10 animate-pulse z-10 loader-bg"></div>
+                        <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Table Styling" class="w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-0" onload="this.classList.remove('opacity-0'); this.previousElementSibling.remove()">
+                        <div class="absolute inset-0 bg-nimah-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                    </div>
+                    <h3 class="font-serif text-3xl text-nimah-black dark:text-nimah-cream mb-3 group-hover:text-nimah-red dark:group-hover:text-nimah-cream transition-colors">Table Styling</h3>
+                    <p class="font-sans text-nimah-black/70 dark:text-nimah-cream/80 text-base leading-relaxed border-t border-nimah-black/10 dark:border-nimah-cream/20 pt-4 mt-4">Aesthetic tablescapes that set the mood before the first course is even served.</p>
+                </div>
+                <!-- Service 3 -->
+                <div class="group cursor-pointer">
+                    <div class="overflow-hidden mb-8 relative aspect-[3/4] border border-nimah-black/10 dark:border-nimah-cream/10 bg-nimah-rose/10">
+                        <div class="absolute inset-0 bg-nimah-rose/20 dark:bg-nimah-cream/10 animate-pulse z-10 loader-bg"></div>
+                        <img src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Menu Design" class="w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-0" onload="this.classList.remove('opacity-0'); this.previousElementSibling.remove()">
+                        <div class="absolute inset-0 bg-nimah-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                    </div>
+                    <h3 class="font-serif text-3xl text-nimah-black dark:text-nimah-cream mb-3 group-hover:text-nimah-red dark:group-hover:text-nimah-cream transition-colors">Menu Design</h3>
+                    <p class="font-sans text-nimah-black/70 dark:text-nimah-cream/80 text-base leading-relaxed border-t border-nimah-black/10 dark:border-nimah-cream/20 pt-4 mt-4">Bespoke culinary journeys tailored to your preferences and dietary needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Form Section -->
+    <section id="contact" class="py-20 md:py-24 bg-white dark:bg-nimah-black transition-colors duration-500">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="font-sans uppercase text-nimah-red tracking-[0.3em] text-xs font-bold">Concierge Service</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-nimah-black dark:text-nimah-cream mt-6 mb-8">Request Hosting</h2>
+                <p class="font-sans text-nimah-olive dark:text-nimah-rose/80 max-w-xl mx-auto leading-relaxed">
+                    Experience the luxury of being a guest at your own event. From menu curation to table setting, 
+                    allow me to handle the details while you enjoy the company.
+                </p>
+            </div>
+
+            <div class="bg-nimah-paper dark:bg-white/5 p-10 md:p-16 border border-nimah-rose/10 dark:border-nimah-cream/10 shadow-2xl">
+                <!-- Success Message (Hidden by default) -->
+                <div id="form-success" class="hidden flex-col items-center justify-center py-12 text-center animate-fade-in-up">
+                    <i data-lucide="check-circle" class="text-nimah-olive w-16 h-16 mb-8"></i>
+                    <h3 class="font-serif text-4xl text-nimah-black dark:text-white mb-6">Request Received</h3>
+                    <p class="text-nimah-black/70 dark:text-nimah-cream/80 max-w-md mb-8">
+                        Thank you. I have received your details. I will review the date and theme, and reach out to your email shortly to discuss the finer details.
+                    </p>
+                    <button onclick="resetForm()" class="text-nimah-red hover:text-nimah-rose font-sans uppercase tracking-widest text-xs border-b border-nimah-red pb-1">
+                        Send another request
+                    </button>
+                </div>
+
+                <!-- Form -->
+                <form id="booking-form" class="space-y-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-3 group">
+                            <label for="name" class="block text-xs font-sans uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-rose group-focus-within:text-nimah-red transition-colors">Full Name</label>
+                            <input required type="text" id="name" name="name" placeholder="Jane Doe" class="w-full bg-transparent border-b border-nimah-black/20 dark:border-nimah-cream/20 outline-none py-2 transition-all text-nimah-black dark:text-nimah-cream placeholder:text-nimah-black/20 focus:border-nimah-red dark:focus:border-nimah-rose" />
+                        </div>
+                        <div class="space-y-3 group">
+                            <label for="email" class="block text-xs font-sans uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-rose group-focus-within:text-nimah-red transition-colors">Email Address</label>
+                            <input required type="email" id="email" name="email" placeholder="jane@example.com" class="w-full bg-transparent border-b border-nimah-black/20 dark:border-nimah-cream/20 outline-none py-2 transition-all text-nimah-black dark:text-nimah-cream placeholder:text-nimah-black/20 focus:border-nimah-red dark:focus:border-nimah-rose" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-3 group">
+                            <label for="date" class="block text-xs font-sans uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-rose group-focus-within:text-nimah-red transition-colors">Preferred Date</label>
+                            <input required type="date" id="date" name="date" class="w-full bg-transparent border-b border-nimah-black/20 dark:border-nimah-cream/20 outline-none py-2 transition-all text-nimah-black dark:text-nimah-cream focus:border-nimah-red dark:focus:border-nimah-rose" />
+                            <p id="date-error" class="text-nimah-red text-xs hidden flex items-center gap-1 mt-1"><i data-lucide="alert-circle" class="w-3 h-3"></i> Date cannot be in the past.</p>
+                        </div>
+                        <div class="space-y-3 group">
+                            <label for="guestCount" class="block text-xs font-sans uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-rose group-focus-within:text-nimah-red transition-colors">Number of Guests</label>
+                            <input required type="number" min="1" id="guestCount" name="guestCount" value="2" class="w-full bg-transparent border-b border-nimah-black/20 dark:border-nimah-cream/20 outline-none py-2 transition-all text-nimah-black dark:text-nimah-cream focus:border-nimah-red dark:focus:border-nimah-rose" />
+                        </div>
+                    </div>
+                    <div class="space-y-3 group">
+                         <label for="occasion" class="block text-xs font-sans uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-rose group-focus-within:text-nimah-red transition-colors">Occasion / Theme Idea</label>
+                         <input type="text" id="occasion" name="occasion" placeholder="Birthday Dinner, Summer Solstice..." class="w-full bg-transparent border-b border-nimah-black/20 dark:border-nimah-cream/20 outline-none py-2 transition-all text-nimah-black dark:text-nimah-cream placeholder:text-nimah-black/20 focus:border-nimah-red dark:focus:border-nimah-rose" />
+                    </div>
+                    <div class="space-y-3 group">
+                         <label for="allergies" class="block text-xs font-sans uppercase tracking-[0.2em] text-nimah-olive dark:text-nimah-rose group-focus-within:text-nimah-red transition-colors">Dietary Restrictions & Allergies</label>
+                         <textarea id="allergies" name="allergies" rows="4" placeholder="Please list any allergies (e.g., Peanuts, Shellfish) or restrictions..." class="w-full bg-transparent border border-nimah-black/20 dark:border-nimah-cream/20 outline-none p-4 transition-all text-nimah-black dark:text-nimah-cream placeholder:text-nimah-black/20 resize-none focus:border-nimah-red dark:focus:border-nimah-rose"></textarea>
+                    </div>
+                    <div class="pt-8 text-center">
+                        <button type="submit" class="px-16 py-5 bg-nimah-red text-nimah-cream font-sans uppercase tracking-[0.25em] text-xs hover:bg-nimah-black transition-all duration-500 w-full md:w-auto shadow-xl">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-nimah-black text-nimah-cream py-16 border-t border-nimah-rose/10 transition-colors duration-500">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-8 md:mb-0 text-center md:text-left">
+          <h2 class="font-serif text-2xl tracking-widest text-nimah-cream mb-2">HOST <span class="italic text-nimah-red">with</span> NIMAH</h2>
+          <p class="text-[10px] font-sans uppercase tracking-widest text-nimah-rose/60">© 2024 All Rights Reserved.</p>
+        </div>
+
+        <div class="flex space-x-10">
+          <a href="https://www.instagram.com/Host_with_Nimah" target="_blank" rel="noopener noreferrer" class="text-nimah-rose hover:text-nimah-cream transition-colors flex items-center gap-2 group">
+            <i data-lucide="instagram" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+            <span class="hidden md:inline font-sans text-xs tracking-widest">@Host_with_Nimah</span>
+          </a>
+           <a href="https://www.instagram.com/Life_ov_Nimah" target="_blank" rel="noopener noreferrer" class="text-nimah-rose hover:text-nimah-cream transition-colors flex items-center gap-2 group">
+            <i data-lucide="instagram" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+            <span class="hidden md:inline font-sans text-xs tracking-widest">@Life_of_Nimah</span>
+          </a>
+          <a href="#contact" class="text-nimah-rose hover:text-nimah-cream transition-colors flex items-center gap-2 group">
+            <i data-lucide="mail" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+            <span class="hidden md:inline font-sans text-xs tracking-widest">Contact</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Back To Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 p-4 rounded-full bg-nimah-red text-nimah-cream shadow-2xl hover:bg-nimah-rose dark:hover:bg-nimah-cream dark:hover:text-nimah-black transition-all duration-500 z-50 group border border-white/10 backdrop-blur-sm opacity-0 translate-y-10 pointer-events-none" aria-label="Back to top">
+        <i data-lucide="arrow-up" class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300"></i>
+    </button>
+
+    <!-- App Logic (Module) -->
+</body>
+</html>
